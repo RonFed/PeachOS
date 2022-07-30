@@ -70,6 +70,7 @@ int heap_get_start_block(struct heap* heap, uint32_t total_blocks) {
     {
         if (heap_get_entry_type(table->entries[i]) != HEAP_BLOCK_TABLE_ENTRY_FREE)
         {
+            // Reset the block sequence we found - not a large enough
             current_block = 0;
             starting_block = -1;
             continue;
@@ -81,6 +82,7 @@ int heap_get_start_block(struct heap* heap, uint32_t total_blocks) {
 
         current_block++;
         if (current_block == total_blocks) {
+            // found a loarge enough continous blocks sequence
             break;
         }
     }
@@ -99,6 +101,7 @@ void* heap_block_to_address(struct heap* heap, int block) {
 void heap_mark_blocks_taken(struct heap* heap, int start_block, int total_blocks) {
     int end_block = start_block + total_blocks - 1;
     
+    // Mark the first entry as taken and as being the first
     HEAP_BLOCK_TABLE_ENTRY entry = HEAP_BLOCK_TABLE_ENTRY_TAKEN | HEAP_BLOCK_IS_FIRST;
     if (total_blocks > 1) {
         entry |= HEAP_BLOCK_HAS_NEXT;
