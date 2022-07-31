@@ -1,5 +1,7 @@
 #include "paging.h"
 #include "memory/heap/kheap.h"
+#include "status.h"
+
 
 void paging_load_directory(uint32_t* directory);
 static uint32_t* current_directory = 0;
@@ -31,3 +33,42 @@ uint32_t* paging_4gb_chunk_get_directory( struct paging_4gb_chunk* chunk_4gb) {
     return chunk_4gb->directory_entry;
 }
 
+bool paging_is_aligned(void* address) {
+    return ((uint32_t)address % PAGING_PAGE_SIZE) == 0;
+}
+
+int paging_get_indexes(void* virtual_address, uint32_t* directory_index_out, uint32_t* table_index_out) {
+    int res = NO_ERROR;
+    if (!paging_is_aligned(virtual_address)) {
+        res = -ERROR_INVALID_ARG;
+        goto out;
+    }
+
+    *directory_index_out = ((uint32_t)virtual_address / (PAGING_TOTAL_ENTRIES_PER_TABLE * PAGING_PAGE_SIZE));
+    *table_index_out = ((uint32_t)virtual_address % (PAGING_TOTAL_ENTRIES_PER_TABLE * PAGING_PAGE_SIZE) / PAGING_PAGE_SIZE);
+out:
+    return res;
+}
+
+/* Setting the mapping from virtual address to val which
+Contains the physical address as well as flags */
+int paging_set(uint32_t* directory, void* virtual_address, uint32_t val) {
+    if (!paging_is_aligned(virtual_address)) {
+        return -ERROR_INVALID_ARG;
+    }
+
+    uint32_t directory_index = 0;
+    uint32_t table_index = 0;
+
+    int res = paging_get_indexes(virtual_address, &directory_index, &table_index);
+    if (res < 0) {
+        return res;
+    }
+
+    uint32_t entry = directory[directory_index];
+    uint32_t* table = (uint32_t*) (entry & 0xfffff000);
+    table[table_index] = val;
+
+    return NO_ERROR;
+
+}
