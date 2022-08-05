@@ -37,7 +37,7 @@ int21h:
     iret
 
 no_interrupt:
-        ; Clear interrupts
+    ; Clear interrupts
     cli
     ; Push all general purpose regs
     pushad

@@ -4,6 +4,7 @@
     "files.associations": {
         "memory.h": "c",
         "idt.h": "c",
-        "io.h": "c"
+        "io.h": "c",
+        "status.h": "c"
     }
 }
