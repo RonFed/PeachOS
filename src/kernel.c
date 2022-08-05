@@ -8,6 +8,7 @@
 #include "memory/paging/paging.h"
 #include "disk/disk.h"
 #include "fs/pparser.h"
+#include "disk/streamer.h"
 
 uint16_t* video_mem = 0;
 uint16_t terminal_row = 0;
@@ -83,9 +84,9 @@ void kernel_main() {
     // Enable the system interrupts
     enable_interrupts();
 
-    struct path_root* root_path = pathparser_parse("0:/bin/shell.bin", NULL);
-
-    if (root_path) {
-
-    }
+    struct disk_stream* stream = disk_streamer_new(0);
+    disk_streamer_seek(stream, 0x201);
+    unsigned char c[1000];
+    disk_stremer_read(stream, &c, 1000);
+    while (1) {}
 }
