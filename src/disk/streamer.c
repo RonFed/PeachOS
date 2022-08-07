@@ -28,8 +28,8 @@ int disk_stremer_read(struct disk_stream* stream, void* out, int total) {
         goto out;
     }
 
-    int bytes_left_in_sector = PEACHOS_SECTOR_SIZE - offset;
-    int total_to_read = (total > bytes_left_in_sector) ? (bytes_left_in_sector) : total;
+    int bytes_to_read_in_sector = PEACHOS_SECTOR_SIZE - offset;
+    int total_to_read = (total > bytes_to_read_in_sector) ? (bytes_to_read_in_sector) : total;
     for (int i = 0; i < total_to_read; i++)
     {
         *(char*)out++ = buf[offset + i];
@@ -37,8 +37,8 @@ int disk_stremer_read(struct disk_stream* stream, void* out, int total) {
 
     // Adjust the stream
     stream->pos += total_to_read;
-    if (total > PEACHOS_SECTOR_SIZE) {
-        res = disk_stremer_read(stream, out, total - PEACHOS_SECTOR_SIZE);
+    if (total > bytes_to_read_in_sector) {
+        res = disk_stremer_read(stream, out, total - bytes_to_read_in_sector);
     }
 
 out:

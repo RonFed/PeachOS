@@ -8,6 +8,7 @@
 #include "memory/paging/paging.h"
 #include "disk/disk.h"
 #include "fs/pparser.h"
+#include "fs/file.h"
 #include "disk/streamer.h"
 
 uint16_t* video_mem = 0;
@@ -68,6 +69,9 @@ void kernel_main() {
     // Init the heap
     kheap_init();
 
+    // Initialize filesystems
+    fs_init();
+
     // Search and initialize the disks
     disk_search_and_init();
 
@@ -84,9 +88,7 @@ void kernel_main() {
     // Enable the system interrupts
     enable_interrupts();
 
-    struct disk_stream* stream = disk_streamer_new(0);
-    disk_streamer_seek(stream, 0x201);
-    unsigned char c[1000];
-    disk_stremer_read(stream, &c, 1000);
+    char buf[20];
+    strcpy(buf, "hello!");
     while (1) {}
 }
