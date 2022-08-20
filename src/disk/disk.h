@@ -11,7 +11,13 @@ struct disk {
     PEACHOS_DISK_TYPE type;
     int sector_size;
 
+    // The if of the disk
+    int id;
+
     struct filesystem* filesystem;
+
+    // Private data of the fs
+    void* fs_private;
 };
 
 void disk_search_and_init();
