@@ -7,4 +7,5 @@
 #define ERROR_NO_MEMORY     3
 #define ERROR_BAD_PATH      4
 #define ERROR_FS_NOT_US     5
+#define ERROR_READ_ONLY     6
 #endif

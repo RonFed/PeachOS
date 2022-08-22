@@ -2,9 +2,11 @@
 #include "config.h"
 #include "memory/memory.h"
 #include "memory/heap/kheap.h"
+#include "string/string.h"
 #include "status.h"
 #include "kernel.h"
 #include "fat/fat16.h"
+#include "disk/disk.h"
 
 struct filesystem *filesystems[PEACHOS_MAX_FILESYSTEMS];
 struct file_descriptor *file_descriptors[PEACHOS_MAX_FILEDESCRIPTORS];
@@ -102,7 +104,75 @@ struct filesystem *fs_resolve(struct disk *disk)
     return fs;
 }
 
-int fopen(const char *filename, const char *mode)
+FILE_MODE file_get_mode_by_string(const char* str) {
+    FILE_MODE mode = FILE_MODE_INVALID;
+    if (strncmp(str, "r", 1) == 0) {
+        mode = FILE_MODE_READ;
+    }
+    else if (strncmp(str, "w", 1) == 0) {
+        mode = FILE_MODE_WRITE;
+    }
+    else if (strncmp(str, "a", 1) == 0) {
+        mode = FILE_MODE_APPEND;
+    }
+    return mode;
+}
+
+int fopen(const char *filename, const char *mode_str)
 {
-    return -ERROR_IO;
+    int res = NO_ERROR;
+    struct path_root* root_path = pathparser_parse(filename, NULL);
+    if (!root_path)
+    {
+        res = -ERROR_INVALID_ARG;
+        goto out;
+    }
+
+    // Can't have just root path
+    if (!root_path->first) {
+        res = -ERROR_INVALID_ARG;
+        goto out;
+    }
+
+    // Ensure the disk we are reading from exits
+    struct disk* disk = disk_get(root_path->drive_no);
+    if (!disk) {
+        res = -ERROR_IO;
+        goto out;
+    }
+
+    if (!disk->filesystem) {
+        res = -ERROR_IO;
+        goto out;
+    }
+
+    FILE_MODE mode = file_get_mode_by_string(mode_str);
+    if (mode == FILE_MODE_INVALID) {
+        res = -ERROR_INVALID_ARG;
+        goto out;
+    }
+
+    void* descriptor_private_data = disk->filesystem->open(disk, root_path->first, mode);
+    if (ISERROR(descriptor_private_data)) {
+        res = ERROR_I(descriptor_private_data);
+        goto out;
+    }
+
+    struct file_descriptor* desc = 0;
+    res = file_new_dwscriptor(&desc);
+    if (res < 0) {
+        goto out;
+    }
+
+    desc->filesystem = disk->filesystem;
+    desc->private = descriptor_private_data;
+    desc->disk = disk;
+    res = desc->index;
+
+out:
+    // fopen should return 0 on failure
+    if (res < 0) {
+        res = 0;
+    }
+    return res;
 }
