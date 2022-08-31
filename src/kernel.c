@@ -17,6 +17,7 @@
 #include "task/task.h"
 #include "task/process.h"
 #include "status.h"
+#include "isr80h/isr80h.h"
 
 uint16_t* video_mem = 0;
 uint16_t terminal_row = 0;
@@ -73,6 +74,12 @@ void panic(const char* msg) {
     print(msg);
     while(1) {}
 }
+
+void kernel_page(){
+    kernel_registers();
+    paging_switch(kernel_chunk);
+}
+
 struct tss tss;
 struct gdt gdt_real[PEACHOS_TOTOAL_GDT_SEGMENTS];
 // Here all the physical memory range is allowed, 
@@ -119,9 +126,11 @@ void kernel_main() {
     // Setup paging
     kernel_chunk = paging_new_4gb(PAGING_IS_WRITEABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
     // Switch to kernel paging chunk
-    paging_switch(paging_4gb_chunk_get_directory(kernel_chunk));
+    paging_switch(kernel_chunk);
     // Enable paging
     enable_paging();
+    // Register the kernel commands
+    isr80h_register_commands();
 
     struct process* process = 0;
     int res = process_load("0:/blank.bin", &process);

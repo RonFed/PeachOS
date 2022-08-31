@@ -4,12 +4,58 @@
 #include "kernel.h"
 #include "memory/heap/kheap.h"
 #include "process.h"
+#include "idt/idt.h"
+#include "memory/paging/paging.h"
+#include "string/string.h"
 
 // Current task running
 struct task* current_task = 0;
 // Task lined list
 struct task* task_tail = 0;
 struct task* task_head = 0;
+
+// Copy the string pointed by virt (virtual address) in the user task
+// to the physical memory phys. max is the number of bytes to copy
+int copy_string_from_task(struct task* task, void* virt, void* phys, int max) {
+    if (max > PAGING_PAGE_SIZE) {
+        return -ERROR_INVALID_ARG;
+    }
+
+    int res = 0;
+
+    char* tmp = kzalloc(max);
+    if (!tmp) {
+        res = -ERROR_NO_MEMORY;
+        goto out;
+    }
+
+    uint32_t* task_directory = task->page_directory->directory_entry;
+    // Save the old mapping to tmp to restore later
+    uint32_t old_entry = paging_get(task_directory, tmp);
+    // Map the tmp memory in the user page table so the user (task) can "see" it
+    paging_map(task->page_directory, tmp, tmp, PAGING_IS_WRITEABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    
+    // Switch to user paging (so we can understand the virtual address) and copy the string to tmp
+    paging_switch(task->page_directory);
+    strncpy(tmp, virt, max);
+    
+    // Switch back to kernel paging
+    kernel_page();
+
+    // Restore the old entry (avoid the user having pointer to kernel memory)
+    res = paging_set(task_directory, tmp, old_entry);
+    if (res < 0) {
+        res = -ERROR_IO;
+        goto out_free;
+    }
+
+    strncpy(phys, tmp, max);
+
+out_free:
+    kfree(tmp);
+out:
+    return res;
+}
 
 int task_init(struct task* task, struct process* process);
 
@@ -84,8 +130,32 @@ int task_free(struct task* task) {
 
 int task_switch(struct task* task) {
     current_task = task;
-    paging_switch(task->page_directory->directory_entry);
+    paging_switch(task->page_directory);
     return 0;
+}
+
+void task_save_state(struct task* task, struct interrupt_frame* int_frame) {
+    task->registers.ip =    int_frame->ip;
+    task->registers.cs =    int_frame->cs;
+    task->registers.flags = int_frame->flags;
+    task->registers.esp =   int_frame->esp;
+    task->registers.ss =    int_frame->ss;
+    task->registers.eax =   int_frame->eax;
+    task->registers.ebp =   int_frame->ebp;
+    task->registers.ebx =   int_frame->ebx;
+    task->registers.ecx =   int_frame->ecx;
+    task->registers.edi =   int_frame->edi;
+    task->registers.edx =   int_frame->edx;
+    task->registers.esi =   int_frame->esi;
+}
+
+void task_current_save_state(struct interrupt_frame* int_frame) {
+    if (!task_current()) {
+        panic("NO current task to save\n");
+    }
+
+    struct task* task = task_current();
+    task_save_state(task, int_frame);
 }
 
 int task_page() {

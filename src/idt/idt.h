@@ -2,6 +2,9 @@
 #define IDT_H
 #include <stdint.h>
 
+struct interrupt_frame;
+typedef void*(*ISR80_COMMAND)(struct interrupt_frame* frame);
+
 // Interrupt descriptor table descriptor
 struct idt_desc
 {
@@ -18,8 +21,26 @@ struct idtr_desc
     uint32_t base;  //  Base address of the interrupt descrtiptor table
 } __attribute__((packed));
 
+struct interrupt_frame
+{
+    uint32_t edi;
+    uint32_t esi;
+    uint32_t ebp;
+    uint32_t reserved; // sp from pushad (not intersting)
+    uint32_t ebx;
+    uint32_t edx;
+    uint32_t ecx;
+    uint32_t eax;
+    uint32_t ip;
+    uint32_t cs;
+    uint32_t flags;
+    uint32_t esp;   // User's stack pointer
+    uint32_t ss;
+}__attribute__((packed));
+
 void idt_init();
 void enable_interrupts();
 void disable_interrupts();
+void isr80h_register_command(int command, ISR80_COMMAND command_handler);
 
 #endif

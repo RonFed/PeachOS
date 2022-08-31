@@ -2,14 +2,17 @@
 #include "config.h"
 #include "kernel.h"
 #include "memory/memory.h"
+#include "task/task.h"
 #include "io/io.h"
 
 struct idt_desc idt_descriptors[PEACHOS_TOTAL_INTERRUPTS];
 struct idtr_desc idtr_descriptor;
 
+static ISR80_COMMAND isr80h_commands[PEACHOS_MAX_ISR80H_COMMANDS];
 extern void idt_load(struct idtr_desc* ptr);
 extern void int21h();
 extern void no_interrupt();
+extern void isr80h_wrapper();
 
 void int21h_handler() {
    print("Keyboard pressed ! \n");
@@ -32,6 +35,7 @@ void idt_set(int interrupt_num, void* address) {
    desc->type_attr = 0xEE;
    desc->offset_2 = (uint32_t) address >> 16;
 }
+
 void idt_init()
 {
    memset(idt_descriptors, 0, sizeof(idt_descriptors));
@@ -45,7 +49,49 @@ void idt_init()
    
    idt_set(0, int_zero);
    idt_set(0x21, int21h);
+   idt_set(0x80, isr80h_wrapper);
 
    // Load the interrupt descriptor table
    idt_load(&idtr_descriptor);
+}
+
+void isr80h_register_command(int command, ISR80_COMMAND command_handler) {
+   if (command < 0 || command >= PEACHOS_MAX_ISR80H_COMMANDS) {
+      // Invalid command CALLED FROM KERNEL
+      panic("The command is out of bounds\n");
+   }
+
+   if (isr80h_commands[command]) {
+      panic("Attempt to overwrite an existing command\n");
+   }
+
+   isr80h_commands[command] = command_handler;
+}
+
+void* isr80h_handle_command(int command, struct interrupt_frame* int_frame) {
+   void* result = 0;
+
+   if (command < 0 || command >= PEACHOS_MAX_ISR80H_COMMANDS) {
+      // Invalid command
+      return 0;
+   }
+
+   ISR80_COMMAND command_function = isr80h_commands[command];
+   if (!command_function) {
+      // User wants to execute command not implemented
+      return 0;
+   }
+
+   result = command_function(int_frame);
+   return result;
+}
+
+void* isr80h_handler(int command, struct interrupt_frame* int_frame) {
+   void* res = 0;
+
+   kernel_page();
+   task_current_save_state(int_frame);
+   res = isr80h_handle_command(command, int_frame);
+   task_page();
+   return res;
 }
