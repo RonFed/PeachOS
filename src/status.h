@@ -9,4 +9,5 @@
 #define ERROR_FS_NOT_US         5
 #define ERROR_READ_ONLY         6
 #define ERROR_NOT_IPLEMENTED    7
+#define ERROR_IS_TAKEN          8
 #endif

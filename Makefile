@@ -1,4 +1,4 @@
-FILES = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.asm.o ./build/memory/memory.o ./build/idt/idt.o ./build/gdt/gdt.o ./build/gdt/gdt.asm.o ./build/task/task.o ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o ./build/task/tss.asm.o ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/fs/pparser.o ./build/string/string.o ./build/disk/streamer.o ./build/fs/file.o ./build/fs/fat/fat16.o
+FILES = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.asm.o ./build/memory/memory.o ./build/task/process.o ./build/task/task.asm.o ./build/idt/idt.o ./build/gdt/gdt.o ./build/gdt/gdt.asm.o ./build/task/task.o ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o ./build/task/tss.asm.o ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/fs/pparser.o ./build/string/string.o ./build/disk/streamer.o ./build/fs/file.o ./build/fs/fat/fat16.o
 INCLUDES = -I./src
 FLAGS = -g \
 		-ffreestanding \
@@ -58,6 +58,9 @@ all: ./bin/boot.bin ./bin/kernel.bin
 ./build/task/task.o: ./src/task/task.c
 	i686-elf-gcc $(INCLUDES) -I./src/task $(FLAGS) -std=gnu99 -c ./src/task/task.c -o ./build/task/task.o
 
+./build/task/process.o: ./src/task/process.c
+	i686-elf-gcc $(INCLUDES) -I./src/task $(FLAGS) -std=gnu99 -c ./src/task/process.c -o ./build/task/process.o
+
 ./build/idt/idt.o: ./src/idt/idt.c
 	i686-elf-gcc $(INCLUDES) -I./src/idt $(FLAGS) -std=gnu99 -c ./src/idt/idt.c -o ./build/idt/idt.o
 
@@ -75,6 +78,9 @@ all: ./bin/boot.bin ./bin/kernel.bin
 
 ./build/io/io.asm.o: ./src/io/io.asm
 	nasm -f elf -g ./src/io/io.asm -o ./build/io/io.asm.o
+
+./build/task/task.asm.o: ./src/task/task.asm
+	nasm -f elf -g ./src/task/task.asm -o ./build/task/task.asm.o
 
 ./build/memory/heap/heap.o: ./src/memory/heap/heap.c
 	i686-elf-gcc $(INCLUDES) -I./src/memory/heap $(FLAGS) -std=gnu99 -c ./src/memory/heap/heap.c -o ./build/memory/heap/heap.o

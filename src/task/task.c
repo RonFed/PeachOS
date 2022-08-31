@@ -3,6 +3,7 @@
 #include "status.h"
 #include "kernel.h"
 #include "memory/heap/kheap.h"
+#include "process.h"
 
 // Current task running
 struct task* current_task = 0;
@@ -10,13 +11,13 @@ struct task* current_task = 0;
 struct task* task_tail = 0;
 struct task* task_head = 0;
 
-int task_init(struct task* task);
+int task_init(struct task* task, struct process* process);
 
 struct task* task_current() {
     return current_task;
 }
 
-struct task* task_new() {
+struct task* task_new(struct process* process) {
     int res = 0;
     struct task* task = kzalloc(sizeof(struct task));
     if (!task) {
@@ -24,7 +25,7 @@ struct task* task_new() {
         goto out;
     }
 
-    res = task_init(task);
+    res = task_init(task, process);
     if (res != NO_ERROR) {
         goto out;
     }
@@ -79,7 +80,29 @@ int task_free(struct task* task) {
     return 0;
 }
 
-int task_init(struct task* task) {
+int task_switch(struct task* task) {
+    current_task = task;
+    paging_switch(task->page_directory->directory_entry);
+    return 0;
+}
+
+int task_page() {
+    // Set all segments registers back to user land
+    user_registers();
+    task_switch(current_task);
+    return 0;
+}
+
+void task_run_first_ever_task() {
+    if (!current_task) {
+        panic("task_run_first_ever_task: No current task exists \n");
+    }
+
+    task_switch(task_head);
+    task_return(&task_head->registers);
+}
+
+int task_init(struct task* task, struct process* process) {
     memset(task, 0, sizeof(struct task));
     // Map the entire 4GB space to itself
     task->page_directory = paging_new_4gb(PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
@@ -92,5 +115,6 @@ int task_init(struct task* task) {
     task->registers.ss = USER_DATA_SEGMENT;
     task->registers.esp = PEACHOS_PROGRAM_VIRTUAL_STACK_ADDRESS_START;
 
+    task->process = process;
     return 0;
 }

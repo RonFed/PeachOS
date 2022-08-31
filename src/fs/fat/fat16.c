@@ -7,6 +7,7 @@
 #include "disk/streamer.h"
 #include "disk/disk.h"
 #include "kernel.h"
+#include "config.h"
 
 #define PEACHOS_FAT16_SIGNATURE 0x29
 #define PEACHOS_FAT16_FAT_ENTRY_SIZE 0x02

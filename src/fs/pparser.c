@@ -4,6 +4,7 @@
 #include "memory/heap/kheap.h"
 #include "memory/memory.h"
 #include "status.h"
+#include "config.h"
 
 static int pathparser_path_valid_format(const char* filename) {
     int len = strnlen(filename, PEACHOS_MAX_PATH);
