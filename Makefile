@@ -29,7 +29,7 @@ ASMFILES := $(shell find . -name "*.asm")
 OBJECTS := $(patsubst %.c,%.o,$(CFILES))
 ASM_OBJECTS += $(patsubst %.asm,%.asm.o,$(ASMFILES))
 
-all: ./bin/boot.bin ./bin/kernel.bin
+all: ./bin/boot.bin ./bin/kernel.bin user_programs
 	rm -rf ./bin/os.bin
 	dd if=./bin/boot.bin >> ./bin/os.bin
 	dd if=./bin/kernel.bin >> ./bin/os.bin
@@ -37,6 +37,7 @@ all: ./bin/boot.bin ./bin/kernel.bin
 	sudo mount -t vfat ./bin/os.bin /mnt/d
 	# Copy a file over
 	sudo cp ./hello.txt /mnt/d
+	sudo cp ./programs/blank/blank.bin /mnt/d
 	sudo umount /mnt/d
 
 ./bin/kernel.bin: $(FILES)
@@ -112,7 +113,13 @@ all: ./bin/boot.bin ./bin/kernel.bin
 ./build/disk/streamer.o: ./src/disk/streamer.c
 	i686-elf-gcc $(INCLUDES) -I./src/disk $(FLAGS) -std=gnu99 -c ./src/disk/streamer.c -o ./build/disk/streamer.o
 
-clean:
+user_programs:;
+	cd ./programs/blank && $(MAKE) all
+
+user_programs_clean:
+	cd ./programs/blank && $(MAKE) clean
+
+clean: user_programs_clean
 	rm -rf ./bin/boot.bin
 	rm -rf ./bin/kernel.bin
 	rm -rf ./bin/os.bin
