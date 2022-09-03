@@ -18,6 +18,7 @@
 #include "task/process.h"
 #include "status.h"
 #include "isr80h/isr80h.h"
+#include "keyboard/keyboard.h"
 
 uint16_t* video_mem = 0;
 uint16_t terminal_row = 0;
@@ -92,7 +93,9 @@ struct gdt_structured gdt_structured[PEACHOS_TOTOAL_GDT_SEGMENTS] = {
     {.base = 0x00,              .limit = 0xFFFFFFFF,  .type = 0xf2},   // User data segment
     {.base = (uint32_t)&tss,    .limit = sizeof(tss), .type = 0xE9}    // TSS segment
 };
-
+void pic_timer_cb(struct interrupt_frame* frame) {
+    print("timer activated\n");
+}
 void kernel_main() {
     
     terminal_init();
@@ -130,6 +133,10 @@ void kernel_main() {
     enable_paging();
     // Register the kernel commands
     isr80h_register_commands();
+    // Initialize all system keyboards
+    keyboard_init();
+
+    idt_register_interrupt_callback(0x20, pic_timer_cb);
 
     struct process* process = 0;
     int res = process_load("0:/blank.bin", &process);
