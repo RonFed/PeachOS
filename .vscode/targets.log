@@ -2,54 +2,30 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 cd ./programs/blank && make all
  
 # GNU Make 4.1
- 
 # Built for x86_64-pc-linux-gnu
- 
 # Copyright (C) 1988-2014 Free Software Foundation, Inc.
- 
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
- 
 # This is free software: you are free to change and redistribute it.
- 
 # There is NO WARRANTY, to the extent permitted by law.
- 
 
- 
-# Make data base, printed on Tue Oct  4 15:45:22 2022
- 
+# Make data base, printed on Thu Oct  6 00:54:11 2022
 
 # Variables
- 
 
- 
 # automatic
- 
 <D = $(patsubst %/,%,$(dir $<))
- 
 # automatic
- 
 ?F = $(notdir $?)
- 
 # environment
- 
 DESKTOP_SESSION = Lubuntu
- 
 # default
- 
 .SHELLFLAGS := -c
- 
 # environment
- 
 XDG_SESSION_TYPE = x11
- 
 # automatic
- 
 ?D = $(patsubst %/,%,$(dir $?))
- 
 # automatic
- 
 @D = $(patsubst %/,%,$(dir $@))
- 
 # environment
 XAUTHORITY = /home/student/.Xauthority
 # environment
@@ -95,7 +71,7 @@ MAKE_HOST := x86_64-pc-linux-gnu
 # environment
 PATH = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
 # environment
-_LXSESSION_PID = 939
+_LXSESSION_PID = 814
 # environment
 GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
@@ -115,7 +91,7 @@ LS_COLORS =
 # environment
 XDG_SESSION_DESKTOP = Lubuntu
 # environment
-SSH_AUTH_SOCK = /tmp/ssh-GfATs80mXU7U/agent.939
+SSH_AUTH_SOCK = /tmp/ssh-QaRPUPL71OKd/agent.814
 # automatic
 %F = $(notdir $%)
 # environment
@@ -127,7 +103,7 @@ QT_QPA_PLATFORMTHEME = lxqt
 # environment
 XDG_SEAT = seat0
 # environment
-SSH_AGENT_PID = 1037
+SSH_AGENT_PID = 910
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = LXDE
 # environment
@@ -219,7 +195,7 @@ CHROME_DESKTOP = code-url-handler.desktop
 # environment
 LANG = C
 # environment
-VSCODE_PID = 1284
+VSCODE_PID = 1126
 # variable set hash-table stats:
 # Load=92/1024=9%, Rehash=0, Collisions=7/123=6%
 
@@ -266,7 +242,7 @@ all:
 # Load=8/32=25%, Rehash=0, Collisions=1/11=9%
 #  recipe to execute (from 'Makefile', line 2):
 	nasm -f elf ./blank.asm -o ./build/blank.o
-	i686-elf-gcc -g -T ./linker.ld -o ./blank.bin -ffreestanding -O0 -nostdlib -fpic -g ./build/blank.o
+	i686-elf-gcc -g -T ./linker.ld -o ./blank.elf -ffreestanding -O0 -nostdlib -fpic -g ./build/blank.o
 
 # Not a target:
 .SUFFIXES:
@@ -277,7 +253,7 @@ all:
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-31 10:42:04.4123126
+#  Last modified 2022-10-06 00:27:26.678
 #  File has been updated.
 #  Successfully updated.
 
@@ -307,8 +283,9 @@ clean:
 
 # strcache performance: lookups = 21 / hit rate = 38%
 # hash-table stats:
+ 
 # Load=13/8192=0%, Rehash=0, Collisions=1/21=5%
-# Finished Make data base on Tue Oct  4 15:45:22 2022
+# Finished Make data base on Thu Oct  6 00:54:11 2022
 
 # GNU Make 4.1
 # Built for x86_64-pc-linux-gnu
@@ -317,7 +294,7 @@ clean:
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Tue Oct  4 15:45:22 2022
+# Make data base, printed on Thu Oct  6 00:54:11 2022
 
 # Variables
 
@@ -332,7 +309,6 @@ DESKTOP_SESSION = Lubuntu
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
- 
 ?D = $(patsubst %/,%,$(dir $?))
 # makefile (from 'Makefile', line 2)
 INCLUDES = -I./src
@@ -371,7 +347,7 @@ XDG_DATA_DIRS = /etc/xdg/lubuntu:/usr/local/share:/usr/share:/usr/share/gdm:/var
 # environment
 DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
 # makefile (from 'Makefile', line 27)
-CFILES := ./src/disk/streamer.c ./src/disk/disk.c ./src/isr80h/misc.c ./src/isr80h/io.c ./src/isr80h/isr80h.c ./src/kernel.c ./src/fs/pparser.c ./src/fs/file.c ./src/fs/fat/fat16.c ./src/gdt/gdt.c ./src/keyboard/classic.c ./src/keyboard/keyboard.c ./src/memory/heap/heap.c ./src/memory/heap/kheap.c ./src/memory/memory.c ./src/memory/paging/paging.c ./src/task/process.c ./src/task/task.c ./src/idt/idt.c ./src/string/string.c
+CFILES := ./src/loader/formats/elf_loader.c ./src/loader/formats/elf.c ./src/disk/streamer.c ./src/disk/disk.c ./src/isr80h/misc.c ./src/isr80h/io.c ./src/isr80h/isr80h.c ./src/kernel.c ./src/fs/pparser.c ./src/fs/file.c ./src/fs/fat/fat16.c ./src/gdt/gdt.c ./src/keyboard/classic.c ./src/keyboard/keyboard.c ./src/memory/heap/heap.c ./src/memory/heap/kheap.c ./src/memory/memory.c ./src/memory/paging/paging.c ./src/task/process.c ./src/task/task.c ./src/idt/idt.c ./src/string/string.c
 # environment
 LESSOPEN = | /usr/bin/lesspipe %s
 # environment
@@ -385,7 +361,7 @@ MAKE_HOST := x86_64-pc-linux-gnu
 # environment
 PATH = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
 # environment
-_LXSESSION_PID = 939
+_LXSESSION_PID = 814
 # environment
 GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
@@ -407,7 +383,7 @@ LS_COLORS =
 # environment
 XDG_SESSION_DESKTOP = Lubuntu
 # environment
-SSH_AUTH_SOCK = /tmp/ssh-GfATs80mXU7U/agent.939
+SSH_AUTH_SOCK = /tmp/ssh-QaRPUPL71OKd/agent.814
 # makefile (from 'Makefile', line 26)
 SRCDIR = /src
 # automatic
@@ -421,7 +397,7 @@ QT_QPA_PLATFORMTHEME = lxqt
 # environment
 XDG_SEAT = seat0
 # environment
-SSH_AGENT_PID = 1037
+SSH_AGENT_PID = 910
 # makefile (from 'Makefile', line 30)
 ASM_OBJECTS = $(patsubst %.asm,%.asm.o,$(ASMFILES))
 # environment
@@ -513,11 +489,11 @@ CHROME_DESKTOP = code-url-handler.desktop
 # default
 .RECIPEPREFIX := 
 # makefile (from 'Makefile', line 29)
-OBJECTS := ./src/disk/streamer.o ./src/disk/disk.o ./src/isr80h/misc.o ./src/isr80h/io.o ./src/isr80h/isr80h.o ./src/kernel.o ./src/fs/pparser.o ./src/fs/file.o ./src/fs/fat/fat16.o ./src/gdt/gdt.o ./src/keyboard/classic.o ./src/keyboard/keyboard.o ./src/memory/heap/heap.o ./src/memory/heap/kheap.o ./src/memory/memory.o ./src/memory/paging/paging.o ./src/task/process.o ./src/task/task.o ./src/idt/idt.o ./src/string/string.o
+OBJECTS := ./src/loader/formats/elf_loader.o ./src/loader/formats/elf.o ./src/disk/streamer.o ./src/disk/disk.o ./src/isr80h/misc.o ./src/isr80h/io.o ./src/isr80h/isr80h.o ./src/kernel.o ./src/fs/pparser.o ./src/fs/file.o ./src/fs/fat/fat16.o ./src/gdt/gdt.o ./src/keyboard/classic.o ./src/keyboard/keyboard.o ./src/memory/heap/heap.o ./src/memory/heap/kheap.o ./src/memory/memory.o ./src/memory/paging/paging.o ./src/task/process.o ./src/task/task.o ./src/idt/idt.o ./src/string/string.o
 # environment
 LANG = C
 # environment
-VSCODE_PID = 1284
+VSCODE_PID = 1126
 # makefile (from 'Makefile', line 1)
 FILES = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.asm.o ./build/memory/memory.o ./build/task/process.o ./build/task/task.asm.o ./build/idt/idt.o ./build/keyboard/keyboard.o ./build/isr80h/misc.o ./build/isr80h/io.o ./build/gdt/gdt.o ./build/isr80h/isr80h.o ./build/gdt/gdt.asm.o ./build/keyboard/classic.o ./build/task/task.o ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o ./build/task/tss.asm.o ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/fs/pparser.o ./build/string/string.o ./build/disk/streamer.o ./build/fs/file.o ./build/fs/fat/fat16.o
 # variable set hash-table stats:
@@ -541,7 +517,7 @@ FILES = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.asm.o ./build/memo
 
 build/isr80h/isr80h.o: src/isr80h/isr80h.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.167197382
+#  Last modified 2022-10-04 18:45:54.186003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 69):
@@ -549,7 +525,7 @@ build/isr80h/isr80h.o: src/isr80h/isr80h.c
 
 build/memory/memory.o: src/memory/memory.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:25.983197382
+#  Last modified 2022-10-04 18:45:54.022003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 90):
@@ -558,13 +534,13 @@ build/memory/memory.o: src/memory/memory.c
 # Not a target:
 src/keyboard/classic.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-09-03 15:08:44.438383953
+#  Last modified 2022-10-04 17:34:37.302003234
 #  File has been updated.
 #  Successfully updated.
 
 build/disk/streamer.o: src/disk/streamer.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.479197382
+#  Last modified 2022-10-06 00:28:10.106
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 129):
@@ -572,7 +548,7 @@ build/disk/streamer.o: src/disk/streamer.c
 
 build/string/string.o: src/string/string.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.435197382
+#  Last modified 2022-10-04 18:45:54.410003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 126):
@@ -584,6 +560,7 @@ all: bin/boot.bin bin/kernel.bin user_programs
 #  File does not exist.
 #  File has not been updated.
 # variable set hash-table stats:
+ 
 # Load=0/32=0%, Rehash=0, Collisions=0/5=0%
 #  recipe to execute (from 'Makefile', line 33):
 	rm -rf ./bin/os.bin
@@ -593,13 +570,13 @@ all: bin/boot.bin bin/kernel.bin user_programs
 	sudo mount -t vfat ./bin/os.bin /mnt/d
 	# Copy a file over
 	sudo cp ./hello.txt /mnt/d
-	sudo cp ./programs/blank/blank.bin /mnt/d
+	sudo cp ./programs/blank/blank.elf /mnt/d
 	sudo umount /mnt/d
 
 # Not a target:
 src/keyboard/keyboard.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-09-03 14:42:15.867047235
+#  Last modified 2022-10-04 17:57:54.866003234
 #  File has been updated.
 #  Successfully updated.
 
@@ -608,7 +585,6 @@ src/fs/fat/fat16.c:
 #  Implicit rule search has been done.
 #  Last modified 2022-08-28 17:59:51.846002244
 #  File has been updated.
- 
 #  Successfully updated.
 
 # Not a target:
@@ -627,7 +603,7 @@ src/fs/pparser.c:
 
 build/isr80h/io.o: src/isr80h/io.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.123197382
+#  Last modified 2022-10-04 18:45:54.150003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 75):
@@ -642,7 +618,7 @@ src/idt/idt.c:
 
 bin/boot.bin: src/boot/boot.asm
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:25.851197382
+#  Last modified 2022-10-04 18:45:53.910003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 48):
@@ -650,7 +626,7 @@ bin/boot.bin: src/boot/boot.asm
 
 build/io/io.asm.o: src/io/io.asm
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.243197382
+#  Last modified 2022-10-04 18:45:54.246003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 96):
@@ -658,7 +634,7 @@ build/io/io.asm.o: src/io/io.asm
 
 build/task/process.o: src/task/process.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.015197382
+#  Last modified 2022-10-04 18:45:54.054003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 63):
@@ -687,7 +663,7 @@ src/task/task.c:
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-09-03 15:07:31.246383953
+#  Last modified 2022-10-06 00:29:12.558
 #  File has been updated.
 #  Successfully updated.
 
@@ -700,7 +676,7 @@ src/io/io.asm:
 
 build/gdt/gdt.asm.o: src/gdt/gdt.asm
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.171197382
+#  Last modified 2022-10-04 18:45:54.190003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 87):
@@ -716,7 +692,7 @@ test:
 
 build/memory/paging/paging.asm.o: src/memory/paging/paging.asm
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.343197382
+#  Last modified 2022-10-04 18:45:54.334003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 111):
@@ -731,7 +707,7 @@ src/isr80h/misc.c:
 
 build/kernel.asm.o: src/kernel.asm
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:25.851197382
+#  Last modified 2022-10-04 18:45:53.914003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 51):
@@ -746,7 +722,7 @@ src/gdt/gdt.asm:
 
 build/fs/file.o: src/fs/file.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.551197382
+#  Last modified 2022-10-04 18:45:54.470003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 120):
@@ -769,13 +745,13 @@ src/memory/heap/kheap.c:
 # Not a target:
 src/isr80h/isr80h.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-09-02 12:35:31.227842392
+#  Last modified 2022-10-04 18:31:24.622003234
 #  File has been updated.
 #  Successfully updated.
 
 build/gdt/gdt.o: src/gdt/gdt.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.147197382
+#  Last modified 2022-10-04 18:45:54.170003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 84):
@@ -783,7 +759,7 @@ build/gdt/gdt.o: src/gdt/gdt.c
 
 bin/kernel.bin: build/kernel.asm.o build/kernel.o build/idt/idt.asm.o build/memory/memory.o build/task/process.o build/task/task.asm.o build/idt/idt.o build/keyboard/keyboard.o build/isr80h/misc.o build/isr80h/io.o build/gdt/gdt.o build/isr80h/isr80h.o build/gdt/gdt.asm.o build/keyboard/classic.o build/task/task.o build/io/io.asm.o build/memory/heap/heap.o build/memory/heap/kheap.o build/memory/paging/paging.o build/task/tss.asm.o build/memory/paging/paging.asm.o build/disk/disk.o build/fs/pparser.o build/string/string.o build/disk/streamer.o build/fs/file.o build/fs/fat/fat16.o
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.667197382
+#  Last modified 2022-10-06 00:28:10.182
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 44):
@@ -792,7 +768,7 @@ bin/kernel.bin: build/kernel.asm.o build/kernel.o build/idt/idt.asm.o build/memo
 
 build/task/tss.asm.o: src/task/tss.asm
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.339197382
+#  Last modified 2022-10-04 18:45:54.334003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 93):
@@ -800,7 +776,7 @@ build/task/tss.asm.o: src/task/tss.asm
 
 build/disk/disk.o: src/disk/disk.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.371197382
+#  Last modified 2022-10-04 18:45:54.362003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 114):
@@ -822,7 +798,7 @@ src/memory/memory.c:
 
 build/memory/paging/paging.o: src/memory/paging/paging.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.339197382
+#  Last modified 2022-10-04 18:45:54.330003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 108):
@@ -831,7 +807,7 @@ build/memory/paging/paging.o: src/memory/paging/paging.c
 # Not a target:
 src/disk/streamer.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-06 13:45:00.601094046
+#  Last modified 2022-10-04 20:02:52.109905324
 #  File has been updated.
 #  Successfully updated.
 
@@ -844,7 +820,7 @@ src/string/string.c:
 
 build/kernel.o: src/kernel.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:25.883197382
+#  Last modified 2022-10-04 18:45:53.942003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 54):
@@ -862,10 +838,11 @@ src/task/tss.asm:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
+ 
 
 build/keyboard/classic.o: src/keyboard/classic.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.203197382
+#  Last modified 2022-10-04 18:45:54.214003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 81):
@@ -873,7 +850,7 @@ build/keyboard/classic.o: src/keyboard/classic.c
 
 build/idt/idt.asm.o: src/idt/idt.asm
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:25.959197382
+#  Last modified 2022-10-04 18:45:54.006003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 57):
@@ -882,14 +859,13 @@ build/idt/idt.asm.o: src/idt/idt.asm
 # Not a target:
 src/isr80h/io.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-09-02 12:33:57.020762372
+#  Last modified 2022-10-04 18:30:04.454003234
 #  File has been updated.
 #  Successfully updated.
 
- 
 build/task/task.asm.o: src/task/task.asm
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.015197382
+#  Last modified 2022-10-04 18:45:54.058003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 99):
@@ -898,7 +874,7 @@ build/task/task.asm.o: src/task/task.asm
 # Not a target:
 src/task/process.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-31 23:01:53.47311467
+#  Last modified 2022-10-04 16:05:49.467917873
 #  File has been updated.
 #  Successfully updated.
 
@@ -915,7 +891,7 @@ clean: user_programs_clean
 
 build/fs/fat/fat16.o: src/fs/fat/fat16.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.655197382
+#  Last modified 2022-10-04 18:45:54.562003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 123):
@@ -930,7 +906,7 @@ src/idt/idt.asm:
 
 build/fs/pparser.o: src/fs/pparser.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.403197382
+#  Last modified 2022-10-04 18:45:54.390003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 117):
@@ -945,7 +921,7 @@ src/task/task.asm:
 
 build/keyboard/keyboard.o: src/keyboard/keyboard.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.071197382
+#  Last modified 2022-10-04 18:45:54.110003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 78):
@@ -953,7 +929,7 @@ build/keyboard/keyboard.o: src/keyboard/keyboard.c
 
 build/idt/idt.o: src/idt/idt.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.043197382
+#  Last modified 2022-10-04 18:45:54.086003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 66):
@@ -961,7 +937,7 @@ build/idt/idt.o: src/idt/idt.c
 
 build/memory/heap/heap.o: src/memory/heap/heap.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.279197382
+#  Last modified 2022-10-04 18:45:54.278003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 102):
@@ -969,7 +945,7 @@ build/memory/heap/heap.o: src/memory/heap/heap.c
 
 build/task/task.o: src/task/task.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.243197382
+#  Last modified 2022-10-04 18:45:54.246003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 60):
@@ -977,7 +953,7 @@ build/task/task.o: src/task/task.c
 
 build/memory/heap/kheap.o: src/memory/heap/kheap.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.303197382
+#  Last modified 2022-10-04 18:45:54.302003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 105):
@@ -1027,7 +1003,7 @@ user_programs:
 
 build/isr80h/misc.o: src/isr80h/misc.c
 #  Implicit rule search has not been done.
-#  Last modified 2022-09-03 21:57:26.107197382
+#  Last modified 2022-10-04 18:45:54.126003234
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 72):
@@ -1057,7 +1033,7 @@ user_programs_clean:
 # Not a target:
 src/kernel.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-09-03 21:57:23.943197382
+#  Last modified 2022-10-04 18:45:29.638003234
 #  File has been updated.
 #  Successfully updated.
 
@@ -1075,6 +1051,6 @@ src/kernel.c:
 # strcache performance: lookups = 150 / hit rate = 47%
 # hash-table stats:
 # Load=79/8192=1%, Rehash=0, Collisions=1/150=1%
-# Finished Make data base on Tue Oct  4 15:45:22 2022
+# Finished Make data base on Thu Oct  6 00:54:11 2022
 
  

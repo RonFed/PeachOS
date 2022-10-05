@@ -2,6 +2,8 @@
 #include "memory/heap/kheap.h"
 #include "config.h"
 
+#include <stdbool.h>
+
 struct disk_stream* disk_streamer_new(int disk_id) {
     struct disk* disk = disk_get(disk_id);
     if (!disk) {
