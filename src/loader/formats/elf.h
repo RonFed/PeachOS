@@ -114,9 +114,9 @@ struct elf_header {
 }__attribute__((packed));
 
 struct elf32_dyn {
-    elf32_sword d+tag;
+    elf32_sword d_tag;
     union {
-        elf32_word  d_val:
+        elf32_word  d_val;
         elf32_addr  d_ptr;
     } d_un;
 }__attribute__((packed));

@@ -10,4 +10,5 @@
 #define ERROR_READ_ONLY         6
 #define ERROR_NOT_IPLEMENTED    7
 #define ERROR_IS_TAKEN          8
+#define ERROR_INVALID_FORMAT    9
 #endif
