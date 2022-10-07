@@ -1,4 +1,4 @@
-FILES = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.asm.o ./build/memory/memory.o ./build/task/process.o ./build/task/task.asm.o ./build/idt/idt.o ./build/keyboard/keyboard.o ./build/isr80h/misc.o ./build/isr80h/io.o ./build/gdt/gdt.o ./build/isr80h/isr80h.o ./build/gdt/gdt.asm.o ./build/keyboard/classic.o ./build/task/task.o ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o ./build/task/tss.asm.o ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/loader/formats/elf_loader.o ./build/fs/pparser.o ./build/string/string.o ./build/disk/streamer.o ./build/fs/file.o ./build/loader/formats/elf.o ./build/fs/fat/fat16.o
+FILES = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.asm.o ./build/memory/memory.o ./build/task/process.o ./build/task/task.asm.o ./build/idt/idt.o ./build/keyboard/keyboard.o ./build/isr80h/misc.o ./build/isr80h/io.o ./build/gdt/gdt.o ./build/isr80h/isr80h.o ./build/gdt/gdt.asm.o ./build/keyboard/classic.o ./build/task/task.o ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o ./build/task/tss.asm.o ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/loader/formats/elf_loader.o ./build/fs/pparser.o ./build/string/string.o ./build/disk/streamer.o ./build/fs/file.o ./build/isr80h/heap.o ./build/loader/formats/elf.o ./build/fs/fat/fat16.o
 INCLUDES = -I./src
 FLAGS = -g \
 		-ffreestanding \
@@ -74,6 +74,9 @@ all: ./bin/boot.bin ./bin/kernel.bin user_programs
 ./build/isr80h/io.o: ./src/isr80h/io.c
 	i686-elf-gcc $(INCLUDES) -I./src/isr80h $(FLAGS) -std=gnu99 -c ./src/isr80h/io.c -o ./build/isr80h/io.o
 
+./build/isr80h/heap.o: ./src/isr80h/heap.c
+	i686-elf-gcc $(INCLUDES) -I./src/isr80h $(FLAGS) -std=gnu99 -c ./src/isr80h/heap.c -o ./build/isr80h/heap.o
+
 ./build/keyboard/keyboard.o: ./src/keyboard/keyboard.c
 	i686-elf-gcc $(INCLUDES) -I./src/keyboard $(FLAGS) -std=gnu99 -c ./src/keyboard/keyboard.c -o ./build/keyboard/keyboard.o
 
@@ -134,10 +137,12 @@ all: ./bin/boot.bin ./bin/kernel.bin user_programs
 ./build/loader/formats/elf_loader.o: ./src/loader/formats/elf_loader.c
 	i686-elf-gcc $(INCLUDES) -I./src/loader/formats $(FLAGS) -std=gnu99 -c ./src/loader/formats/elf_loader.c -o ./build/loader/formats/elf_loader.o
 
-user_programs:;
+user_programs:
+	cd ./programs/stdlib && $(MAKE) all
 	cd ./programs/blank && $(MAKE) all
 
 user_programs_clean:
+	cd ./programs/stdlib && $(MAKE) clean
 	cd ./programs/blank && $(MAKE) clean
 
 clean: user_programs_clean

@@ -36,6 +36,65 @@ int process_switch(struct process* process) {
     return 0;
 }
 
+static int process_find_free_allocation_index(struct process* process) {
+    int res = -ERROR_NO_MEMORY;
+    for (int i = 0; i < PEACHOS_MAX_PROCESS_ALLOCATIONS; i++)
+    {
+        if (process->allocations[i] == 0) {
+            res = i;
+            break;
+        }
+    }
+
+    return res;
+}
+
+void* process_malloc(struct process* process, size_t size) {
+    int index = process_find_free_allocation_index(process);
+    if (ISERROR(index)) {
+        return 0;
+    }
+    
+    void* ptr = kzalloc(size);
+    if (!ptr) {
+        return 0;
+    }
+
+    process->allocations[index] = ptr;
+
+    return ptr;
+}
+
+static bool process_is_process_pointer(struct process* process, void* ptr){
+    for (int i = 0; i < PEACHOS_MAX_PROCESS_ALLOCATIONS; i++)
+    {
+        if (process->allocations[i] == ptr) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+static void process_remove_allocation(struct process* process, void* ptr) {
+    for (int i = 0; i < PEACHOS_MAX_PROCESS_ALLOCATIONS; i++)
+    {
+        if (process->allocations[i] == ptr) {
+            process->allocations[i] = 0x00;
+       }
+    }
+}
+
+void process_free(struct process* process, void* ptr) {
+    if (!process_is_process_pointer(process, ptr)) {
+        return;
+    }
+
+    // Remove the allocation from the saved allocations for the process
+    process_remove_allocation(process, ptr);
+    kfree(ptr);
+}
+
 static int process_load_binary(const char* filename, struct process* process) {
     int res = 0;
 
