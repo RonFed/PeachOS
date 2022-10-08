@@ -1,4 +1,4 @@
-FILES=./build/blank.o
+FILES=./build/shell.o
 INCLUDES=-I../stdlib/src
 FLAGS = -g \
 		-ffreestanding \
@@ -22,11 +22,11 @@ FLAGS = -g \
 		-O0 \
 		-Iinc
 all: $(FILES)
-	i686-elf-gcc -g -T ./linker.ld -o ./blank.elf -ffreestanding -O0 -nostdlib -fpic -g $(FILES) ../stdlib/stdlib.elf
+	i686-elf-gcc -g -T ./linker.ld -o ./shell.elf -ffreestanding -O0 -nostdlib -fpic -g $(FILES) ../stdlib/stdlib.elf
 
-./build/blank.o: ./blank.c
-	i686-elf-gcc $(INCLUDES) -I./ $(FLAGS) -std=gnu99 -c ./blank.c -o ./build/blank.o
+./build/shell.o: ./src/shell.c
+	i686-elf-gcc $(INCLUDES) -I./ $(FLAGS) -std=gnu99 -c ./src/shell.c -o ./build/shell.o
 
 clean:
 	rm -rf $(FILES)
-	rm ./blank.elf
+	rm ./shell.elf
