@@ -1,4 +1,4 @@
-FILES=./build/start.o ./build/peachos.asm.o ./build/peachos.o ./build/stdlib.o ./build/stdio.o
+FILES=./build/start.o ./build/peachos.asm.o ./build/peachos.o ./build/stdlib.o ./build/stdio.o ./build/string.o ./build/memory.o
 INCLUDES=-I./src
 FLAGS = -g \
 		-falign-jumps \
@@ -37,6 +37,12 @@ all: $(FILES)
 
 ./build/stdio.o: ./src/stdio.c
 	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/stdio.c -o ./build/stdio.o
+
+./build/string.o: ./src/string.c
+	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/string.c -o ./build/string.o
+
+./build/memory.o: ./src/memory.c
+	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/memory.c -o ./build/memory.o
 
 clean:
 	rm -rf $(FILES)
