@@ -4,6 +4,7 @@
 #include "status.h"
 #include "task/process.h"
 #include "string/string.h"
+#include "kernel.h"
 
 void* isr80h_command6_process_load_start(struct interrupt_frame* int_frame) {
     void* filename_user_ptr = task_get_stack_item(task_current(), 0);
@@ -34,6 +35,35 @@ out:
 }
 
 void* isr80h_command7_system_command(struct interrupt_frame* frame) {
+    struct command_argument* args = task_virt_to_phys(task_current(), task_get_stack_item(task_current(), 0));
+    if (!args || strlen(args[0].argument) == 0) {
+        return ERROR(-ERROR_INVALID_ARG);
+    }
+
+    struct command_argument* root_command_arg = &args[0];
+    const char* program_name = root_command_arg->argument;
+
+    // Very ugly, should implement enviroment variables
+    char path[PEACHOS_MAX_PATH];
+    strcpy(path, "0:/");
+    strncpy(path + 3, program_name, sizeof(path));
+
+    struct process* process = 0;
+    int res = process_load_switch(path, &process);
+
+    if (res < 0) {
+        return ERROR(res);
+    }
+
+    res = process_inject_arguments(process, root_command_arg);
+    if (res < 0) {
+        return ERROR(res);
+    }
+    // Switch paging for user land
+    task_switch(process->task);
+    // Enter user land
+    task_return(&process->task->registers);
+
     return 0;
 }
 

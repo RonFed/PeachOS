@@ -12,7 +12,8 @@ int main(int argc, char const *argv[])
         print("> ");
         char buf[1024];
         peachos_terminal_readline(buf, sizeof(buf), true);
-        peachos_process_load_start(buf);
+        print("\n");
+        peachos_system_run(buf);
         print("\n");
     }
     return 0;

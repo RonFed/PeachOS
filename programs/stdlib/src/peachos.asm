@@ -8,7 +8,7 @@ global peachos_malloc:function
 global peachos_free:function
 global peachos_putchar:function
 global peachos_process_load_start:function
-
+global peachos_system:function
 global peachos_process_get_arguments:function
 
 ; void print(const char* str)
@@ -70,6 +70,17 @@ peachos_process_load_start:
     mov ebp, esp
     push dword[ebp+8]; push variable filename
     mov eax, 6; Command process_load_start (starts a process)
+    int 0x80
+    add esp, 4
+    pop ebp
+    ret
+
+; int peachos_system(struct command_argument* arguments)
+peachos_system:
+    push ebp
+    mov ebp, esp
+    push dword[ebp+8]; push variable arguments
+    mov eax, 7 ;Command 7 - run system command based on arguments
     int 0x80
     add esp, 4
     pop ebp

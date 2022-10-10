@@ -155,9 +155,9 @@ void kernel_main() {
     keyboard_init();
 
     struct process* process = 0;
-    int res = process_load_switch("0:/blank.elf", &process);
+    int res = process_load_switch("0:/shell.elf", &process);
     if (res != NO_ERROR) {
-        panic("Failed to load blank.bin\n");
+        panic("Failed to load shell.elf\n");
     }
 
     struct command_argument arg;
