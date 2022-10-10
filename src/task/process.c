@@ -40,7 +40,7 @@ static int process_find_free_allocation_index(struct process* process) {
     int res = -ERROR_NO_MEMORY;
     for (int i = 0; i < PEACHOS_MAX_PROCESS_ALLOCATIONS; i++)
     {
-        if (process->allocations[i] == 0) {
+        if (process->allocations[i].ptr == 0) {
             res = i;
             break;
         }
@@ -52,23 +52,42 @@ static int process_find_free_allocation_index(struct process* process) {
 void* process_malloc(struct process* process, size_t size) {
     int index = process_find_free_allocation_index(process);
     if (ISERROR(index)) {
-        return 0;
+        goto out_err;
     }
     
     void* ptr = kzalloc(size);
     if (!ptr) {
-        return 0;
+        goto out_err;
     }
 
-    process->allocations[index] = ptr;
+    // Map the malloced memory
+    // Currently only one task (thread), if multiple tasks - add mapping to all of them
+    int res = paging_map_to(process->task->page_directory,
+                            ptr,
+                            ptr,
+                            paging_align_address(ptr + size),
+                            PAGING_IS_WRITEABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    
+    if (ISERROR(res)) {
+        goto out_err;
+    }
 
+    process->allocations[index].ptr = ptr;
+    process->allocations[index].size = size;
     return ptr;
+
+out_err:
+    if (ptr) {
+        kfree(ptr);
+    }
+
+    return 0;
 }
 
 static bool process_is_process_pointer(struct process* process, void* ptr){
     for (int i = 0; i < PEACHOS_MAX_PROCESS_ALLOCATIONS; i++)
     {
-        if (process->allocations[i] == ptr) {
+        if (process->allocations[i].ptr == ptr) {
             return true;
         }
     }
@@ -79,14 +98,91 @@ static bool process_is_process_pointer(struct process* process, void* ptr){
 static void process_remove_allocation(struct process* process, void* ptr) {
     for (int i = 0; i < PEACHOS_MAX_PROCESS_ALLOCATIONS; i++)
     {
-        if (process->allocations[i] == ptr) {
-            process->allocations[i] = 0x00;
+        if (process->allocations[i].ptr == ptr) {
+            process->allocations[i].ptr = 0x00;
+            process->allocations[i].size = 0;
        }
     }
 }
 
+static struct process_allocation* proocess_get_allocation_by_address(struct process* process, void* addr) {
+    for (int i = 0; i < PEACHOS_MAX_PROCESS_ALLOCATIONS; i++) {
+        if (process->allocations[i].ptr == addr) {
+            return &process->allocations[i];
+        }
+    }
+
+    return 0;
+}
+
+void process_get_arguments(struct process* process, int* argc, char*** argv) {
+    *argc = process->arguments.argc;
+    *argv = process->arguments.argv;
+}
+
+int process_count_command_arguments(struct command_argument* root_arg) {
+    struct command_argument* current = root_arg;
+    int i = 0;
+    while (current)
+    {
+        i++;
+        current = current->next;
+    }
+    
+    return i;
+}
+
+int process_inject_arguments(struct process* process, struct command_argument* root_arg) {
+    int res = 0;
+    struct command_argument* current = root_arg;
+    int i = 0;
+    int argc = process_count_command_arguments(root_arg);
+    if (argc == 0) {
+        res = -ERROR_IO;
+        goto out;
+    }
+
+    char** argv = process_malloc(process, sizeof(const char *) * argc);
+    if (!argv) {
+        res = -ERROR_NO_MEMORY;
+        goto out;
+    }
+
+    while (current) {
+        char* arg_str = process_malloc(process, sizeof(current->argument));
+        if (!arg_str) {
+            res = -ERROR_NO_MEMORY;
+            goto out;
+        }
+
+        strncpy(arg_str, current->argument, sizeof(current->argument));
+        argv[i] = arg_str;
+        current = current->next;
+        i++;
+    }
+
+    process->arguments.argc = argc;
+    process->arguments.argv = argv;
+out:
+    return res;
+}
+
 void process_free(struct process* process, void* ptr) {
-    if (!process_is_process_pointer(process, ptr)) {
+    // Unlink the pages from the process for the given address
+    struct process_allocation* allocation = proocess_get_allocation_by_address(process, ptr);
+    if (!allocation) {
+        // not our pointer
+        return;
+    }
+
+    // Remove paging mapping (flagged as not accessable)
+    int res = paging_map_to(process->task->page_directory,
+                            allocation->ptr,
+                            allocation->ptr,
+                            paging_align_address(allocation->ptr + allocation->size),
+                            0x00);
+
+    if (res < 0) {
         return;
     }
 

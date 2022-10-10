@@ -38,4 +38,5 @@ void* paging_align_address(void* ptr);
 void* paging_align_to_lower_page(void* addr);
 
 uint32_t paging_get(uint32_t* dir, void* virt);
+void* paging_get_physical_address(uint32_t* dir, void* virt);
 #endif

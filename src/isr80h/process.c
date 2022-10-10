@@ -32,3 +32,16 @@ void* isr80h_command6_process_load_start(struct interrupt_frame* int_frame) {
 out:
     return 0;
 }
+
+void* isr80h_command7_system_command(struct interrupt_frame* frame) {
+    return 0;
+}
+
+void* isr80h_command8_get_program_arguments(struct interrupt_frame* frame) {
+    struct process* process = task_current()->process;
+    // Get physical address of the process memory pointing to argc and argv
+    struct process_arguments* args = task_virt_to_phys(task_current(), task_get_stack_item(task_current(), 0));
+    // Set argc and argv
+    process_get_arguments(process, &args->argc, &args->argv);
+    return 0;
+}
