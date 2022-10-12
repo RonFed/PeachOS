@@ -60,7 +60,8 @@ restore_general_purpose_registers:
     mov eax, [ebx+24]
     mov ebx, [ebx+12]
 
-    pop ebp
+    ; NO pop ebp to avoide overriding the restored abp value
+    add esp, 4
     ret
 
 user_registers:

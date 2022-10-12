@@ -197,6 +197,7 @@ out:
 
 int fat16_get_root_directory(struct disk* disk,  struct fat_private *fat_private, struct fat_directory* directory) {
     int res = NO_ERROR;
+     struct fat_directory_item* dir = 0x00;
     struct fat_header* primary_header = &fat_private->header.primary_header;
     int root_dir_sector_pos = (primary_header->fat_copies * primary_header->sectors_per_fat) + (primary_header->reserved_sectors);
     int root_dir_ennries = fat_private->header.primary_header.root_dir_entries;
@@ -209,21 +210,21 @@ int fat16_get_root_directory(struct disk* disk,  struct fat_private *fat_private
 
     int total_items = fat16_get_total_items_for_directory(disk, root_dir_sector_pos);
 
-    struct fat_directory_item* dir = kzalloc(root_dir_size);
+    dir = kzalloc(root_dir_size);
     if (!dir) {
         res = -ERROR_NO_MEMORY;
-        goto out;
+        goto err_out;
     }
 
     struct disk_stream* stream = fat_private->directory_stream;
     if (disk_streamer_seek(stream, fat16_sector_to_absolute(disk, root_dir_sector_pos)) != NO_ERROR) {
         res = -ERROR_IO;
-        goto out;
+        goto err_out;
     }
 
     if (disk_stremer_read(stream, dir, root_dir_size) != NO_ERROR) {
         res = -ERROR_IO;
-        goto out;
+        goto err_out;
     }
 
     directory->item = dir;
@@ -232,6 +233,13 @@ int fat16_get_root_directory(struct disk* disk,  struct fat_private *fat_private
     directory->ending_sector_pos = root_dir_sector_pos + total_sectors;
 
 out:
+    return res;
+
+err_out:
+    if (dir) {
+        kfree(dir);
+    }
+
     return res;
 }
 
@@ -278,25 +286,28 @@ out:
     return res;
 }
 
-void fat16_to_proper_string(char** out, const char* in) {
+void fat16_to_proper_string(char** out, const char* in, size_t size) {
+    int i = 0 ;
     while (*in != 0x00 && *in != 0x20) {
         **out = *in;
         *out += 1;
         in += 1;
+        if (i >= (size - 1)) {
+            break;
+        }
+        i++;
     }
 
-    if (*in == 0x20) {
-        **out = 0x00;
-    }
+    **out = 0x00;
 }
 
 void fat16_get_full_relative_filename(struct fat_directory_item* item, char* out, int max_len) {
     memset(out, 0x00, max_len);
     char* out_tmp = out;
-    fat16_to_proper_string(&out_tmp, (const char*)item->filename);
+    fat16_to_proper_string(&out_tmp, (const char*)item->filename, sizeof(item->filename));
     if (item->ext[0] != 0x00 && item->ext[0] != 0x20) {
         *out_tmp++ = '.';
-        fat16_to_proper_string(&out_tmp, (const char*)item->ext);
+        fat16_to_proper_string(&out_tmp, (const char*)item->ext, sizeof(item->ext));
     }
 }
 
@@ -555,23 +566,34 @@ out:
 
 void* fat16_open(struct disk *disk, struct path_part *path, FILE_MODE mode)
 {
+    struct fat_file_descriptor* desc = 0;
+    int err_code = 0;
     if (mode != FILE_MODE_READ) {
-        return ERROR(-ERROR_READ_ONLY);
+        err_code = -ERROR_READ_ONLY;
+        goto err_out;
     }
 
-    struct fat_file_descriptor* desc = 0;
     desc = kzalloc(sizeof(struct fat_file_descriptor));
     if (!desc) {
-        return ERROR(-ERROR_NO_MEMORY);
+        err_code = -ERROR_NO_MEMORY;
+        goto err_out;
     }
 
     desc->item = fat16_get_directory_entry(disk, path);
     if (!desc->item) {
-        return ERROR(-ERROR_IO);
+        err_code = -ERROR_IO;
+        goto err_out;
     }
 
     desc->pos = 0;
     return desc;
+
+err_out:
+    if (desc) {
+        kfree(desc);
+    }
+
+    return ERROR(err_code);
 }
 
 int fat16_read(struct disk* disk, void* descriptor, uint32_t size, uint32_t nmemb, char* out_ptr) {
