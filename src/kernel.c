@@ -155,9 +155,9 @@ void kernel_main() {
     keyboard_init();
 
     struct process* process = 0;
-    int res = process_load_switch("0:/shell.elf", &process);
+    int res = process_load_switch("0:/blank.elf", &process);
     if (res != NO_ERROR) {
-        panic("Failed to load shell.elf\n");
+        panic("Failed to load blank.elf\n");
     }
 
     struct command_argument arg;
@@ -165,6 +165,19 @@ void kernel_main() {
     arg.next = 0;
 
     process_inject_arguments(process, &arg);
+
+
+    res = process_load_switch("0:/blank.elf", &process);
+    if (res != NO_ERROR) {
+        panic("Failed to load blank.elf\n");
+    }
+
+    strcpy(arg.argument, "Abc");
+    arg.next = 0;
+
+    process_inject_arguments(process, &arg);
+
+
     task_run_first_ever_task();
 
     while (1) {}

@@ -95,6 +95,7 @@ out:
     }
     return task;
 }
+
 struct task* task_get_next() {
     if (!current_task->next) {
         return task_head;
@@ -103,6 +104,7 @@ struct task* task_get_next() {
     return current_task->next;
 }
 
+/* Switch task */
 void task_next() {
     struct task* next_task = task_get_next();
     if (!next_task) {
