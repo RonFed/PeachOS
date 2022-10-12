@@ -1,15 +1,16 @@
 #include "peachos.h"
 #include <stdbool.h>
 #include "string.h"
+#include "stdio.h"
 
 struct command_argument* peachos_parse_command(const char* command, int max) {
-    struct command_argument* root_command;
+    struct command_argument* root_command = 0;
     char scommand[1025];
     if (max >= sizeof(scommand)) {
         return 0;
     }
 
-    strncpy(scommand, command, max);
+    strncpy(scommand, command, sizeof(scommand));
     char* token = strtok(scommand, " ");
     if (!token) {
         goto out;
@@ -33,7 +34,7 @@ struct command_argument* peachos_parse_command(const char* command, int max) {
         }
 
         strncpy(new_arg->argument, token, sizeof(new_arg->argument));
-        new_arg->next = 0;
+        new_arg->next = 0x00;
         current->next = new_arg;
         current = new_arg;
         token = strtok(NULL, " ");

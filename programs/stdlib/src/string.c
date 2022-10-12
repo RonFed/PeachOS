@@ -122,6 +122,7 @@ char* strtok(char* str, const char* delimeters) {
         {
             if (*p_start == delimeters[i]) {
                 p_start++;
+                break;
             }
         }
 
@@ -129,14 +130,13 @@ char* strtok(char* str, const char* delimeters) {
             sp = p_start;
             break;
         }
-
-        if (*sp == '\0') {
-            sp = 0;
-            return sp;
-        }
-        
     }
 
+    if (*sp == '\0') {
+        sp = 0;
+        return sp;
+    }
+        
     // find end of substring
     while(*sp != '\0') {
         for (i = 0; i < len; i++)

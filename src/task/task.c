@@ -97,10 +97,20 @@ out:
 }
 struct task* task_get_next() {
     if (!current_task->next) {
-        return current_task;
+        return task_head;
     }
 
     return current_task->next;
+}
+
+void task_next() {
+    struct task* next_task = task_get_next();
+    if (!next_task) {
+        panic("No more tasks\n");
+    }
+
+    task_switch(next_task);
+    task_return(&next_task->registers);
 }
 
 static void task_list_remove(struct task* task) {

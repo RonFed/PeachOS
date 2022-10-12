@@ -9,7 +9,10 @@ int main(int argc, char const *argv[])
     {
         printf("%s\n", argv[i]);
     }
-    
+
+    char* ptr = (char*) 0x00;
+    *ptr = 0x50;
+    printf("bi\n");
     while(1) {}
     return 0;
 }
